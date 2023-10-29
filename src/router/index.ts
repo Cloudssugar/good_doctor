@@ -8,6 +8,11 @@ const routes = [
     component: () => import('../views/home/home.vue') // 懒加载
   },
   {
+    path: '/home',
+    name: 'home',
+    component: () => import('../views/home/home.vue') 
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import('../views/login.vue') 
