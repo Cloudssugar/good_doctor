@@ -75,6 +75,7 @@ const password = ref('')
 const onSubmit = (values) => {
   console.log('submit', values)
 }
+
 //
 const islogin = ref(false)
 const showlogin = () => {
@@ -123,7 +124,7 @@ const getpasslogin = async () => {
     MessageMainVue({ type: 'success', text: res.data.message })
   }
 }
-
+// 去注册
 const toregister = () => {
   router.push('/register')
 }

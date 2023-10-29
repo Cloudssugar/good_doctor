@@ -74,7 +74,7 @@ const getregister = async () => {
     MessageMainVue({ type: 'success', text: res.data.message })
   }
 }
-
+// 去登录
 const tologin = () => {
   router.push('/login')
 }
