@@ -1,7 +1,101 @@
 <template>
-  <div>注册</div>
+  <div>
+    <div class="top">
+      <van-icon name="arrow-left" />
+      <span @click="tologin">登录</span>
+    </div>
+    <div class="login">
+      <p>注册</p>
+      <van-form @submit="onSubmit">
+        <van-cell-group inset>
+          <!-- 手机号 -->
+          <van-field v-model="username" name="请输入手机号码" placeholder="请输入手机号码" :rules="[{ required: true, message: '请输入手机号码' }]" />
+          <!-- 验证码 -->
+          <van-field v-model="code" center clearable placeholder="请输入短信验证码">
+            <template #button>
+              <van-button v-model="code" size="small" type="default">获取验证码</van-button>
+            </template>
+          </van-field>
+          <!-- 密码 -->
+          <van-field v-model="password" type="password" name="请填写密码" placeholder="请填写验证码" :rules="[{ required: true, message: '请填写密码' }]" />
+        </van-cell-group>
+        <div class="agreement">
+          <input type="radio" name="" id="" />
+          我已同意 <a href="#">优医协议</a>
+        </div>
+        <div style="margin: 20px">
+          <van-button round block color="#16c2a3" native-type="submit">确定</van-button>
+        </div>
+      </van-form>
+    </div>
+  </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
-<style lang="scss" scoped></style>
+// 手机号
+const username = ref('')
+// 验证码
+const code = ref('')
+// 密码
+const password = ref('')
+const onSubmit = (values) => {
+  console.log('submit', values)
+}
+const tologin = () => {
+  router.push('/login')
+}
+</script>
+
+<style scoped lang="scss">
+$themecolor: #16c2a3;
+.top {
+  width: 90%;
+  height: 0.8rem;
+  margin-left: 0.3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  span {
+    color: $themecolor;
+  }
+}
+.login {
+  p {
+    font-size: 0.5rem;
+    padding-left: 5%;
+  }
+  .van-form {
+    margin-top: 1rem;
+  }
+  .agreement {
+    margin-top: 0.2rem;
+    font-size: 0.26rem;
+    margin-left: 5%;
+    a {
+      color: $themecolor;
+    }
+    span {
+      float: right;
+    }
+  }
+  .cipher-login {
+    text-align: center;
+    color: $themecolor;
+  }
+}
+.qq {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  font-size: 0.23rem;
+  color: rgb(135, 135, 135);
+}
+</style>
