@@ -20,7 +20,7 @@
           <van-field v-model="password" type="password" name="请填写密码" placeholder="请填写密码" :rules="[{ required: true, message: '请填写密码' }]" />
         </van-cell-group>
         <div class="agreement">
-          <input type="radio" name="" id="" />
+          <input @change="toselect" type="radio" name="" id="" />
           我已同意 <a href="#">优医协议</a>
         </div>
         <div style="margin: 20px">
@@ -58,20 +58,29 @@ const getcode = async () => {
   console.log(res)
   MessageMainVue({ type: 'success', text: res.data.message })
 }
+const checkedval = ref(false)
+const toselect = (e) => {
+  console.log(e.target.checked)
+  checkedval.value = e.target.checked
+}
 
 // 注册
 const getregister = async () => {
-  let res = await postregisterAPI({
-    code: code.value,
-    mobile: mobile.value,
-    password: password.value
-  })
-  console.log(res)
-  if (res.data.message === '请求成功') {
-    router.push('/login')
-    MessageMainVue({ type: 'success', text: '登录成功~' })
+  if (checkedval.value !== true) {
+    MessageMainVue({ type: 'success', text: '请勾选用户协议' })
   } else {
-    MessageMainVue({ type: 'success', text: res.data.message })
+    let res = await postregisterAPI({
+      code: code.value,
+      mobile: mobile.value,
+      password: password.value
+    })
+    console.log(res)
+    if (res.data.message === '请求成功') {
+      router.push('/login')
+      MessageMainVue({ type: 'success', text: '登录成功~' })
+    } else {
+      MessageMainVue({ type: 'success', text: res.data.message })
+    }
   }
 }
 // 去登录

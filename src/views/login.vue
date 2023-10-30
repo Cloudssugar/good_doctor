@@ -19,7 +19,7 @@
           </van-field>
         </van-cell-group>
         <div class="agreement">
-          <input type="radio" name="" id="" />
+          <input type="radio" @change="toselect" name="" id="" />
           我已同意 <a href="#">用户协议</a>
           <span>忘记密码？</span>
         </div>
@@ -35,12 +35,12 @@
       <van-form @submit="onSubmit">
         <van-cell-group inset>
           <!-- 手机号 -->
-          <van-field v-model="mobiles" name="请输入手机号码" placeholder="请输入手机号码" :rules="[{ required: true, message: '请输入手机号码' }]" />
+          <van-field @blur="blur" v-model="mobiles" name="请输入手机号码" placeholder="请输入手机号码" :rules="[{ required: true, message: '请输入手机号码' }]" />
           <!-- 密码 -->
-          <van-field v-model="password" type="password" name="请填写密码" placeholder="请填写验证码" :rules="[{ required: true, message: '请填写密码' }]" />
+          <van-field v-model="password" type="password" name="请填写密码" placeholder="请填写密码" :rules="[{ required: true, message: '请填写密码' }]" />
         </van-cell-group>
         <div class="agreement">
-          <input type="radio" name="" id="" />
+          <input type="radio" @change="toselect" name="" id="" />
           我已同意 <a href="#">用户协议</a>
           <span>忘记密码？</span>
         </div>
@@ -92,36 +92,76 @@ const getcode = async () => {
   MessageMainVue({ type: 'success', text: res.data.message })
 }
 
+// 单选框
+const checkedval = ref(false)
+// 单击时获取单选框的值
+const toselect = (e) => {
+  console.log(e.target.checked)
+  checkedval.value = e.target.checked
+}
+
 // 验证码登录
 const getcodelogin = async () => {
-  let res = await postcodeloginAPI({
-    mobile: mobile.value,
-    code: code.value
-  })
-  console.log(res)
-  if (res.data.message == '请求成功') {
-    router.push('/home')
-    localStorage.setItem('token', res.data.data.token)
-    MessageMainVue({ type: 'success', text: '登录成功~' })
+  // 如果值为false 没有勾选
+  if (checkedval.value !== true) {
+    // 提示
+    MessageMainVue({ type: 'success', text: '请勾选用户协议' })
   } else {
-    MessageMainVue({ type: 'success', text: res.data.message })
+    // 发送请求
+    let res = await postcodeloginAPI({
+      mobile: mobile.value,
+      code: code.value
+    })
+    console.log(res)
+    if (res.data.message == '请求成功') {
+      router.push('/home')
+      localStorage.setItem('token', res.data.data.token)
+      MessageMainVue({ type: 'success', text: '登录成功~' })
+    } else {
+      MessageMainVue({ type: 'success', text: res.data.message })
+    }
   }
-  // MessageMainVue({ type: 'success', text: res.data.message })
 }
+
 // =.==.==.==.==.==.==.==.==.==.==.==.==.==.==.==.==.==.=
+
+// const checkedval = ref(false)
+// const toselect = (e) => {
+//   console.log(e.target.checked)
+//   checkedval.value = e.target.checked
+// }
+
+// 失去焦点
+const blur = () => {
+  const reg = /^1([38]\d|5[0-35-9]|7[3678])\d{8}$/
+  if (mobiles.value == '' || mobiles.value.length <= 10 || !reg.test(mobiles.value)) {
+    MessageMainVue({ type: 'success', text: '请填写正确的手机号码' })
+  }
+}
+
 // 密码登录
 const getpasslogin = async () => {
-  let res = await postpasswordrAPI({
-    mobile: mobiles.value,
-    password: password.value
-  })
-  console.log(res)
-  if (res.data.message == '请求成功') {
-    router.push('/home')
-    localStorage.setItem('token', res.data.data.token)
-    MessageMainVue({ type: 'success', text: '登录成功~' })
+  //
+  const reg = /^1([38]\d|5[0-35-9]|7[3678])\d{8}$/
+  if (mobiles.value == '' || mobiles.value.length <= 10 || !reg.test(mobiles.value)) {
+    MessageMainVue({ type: 'success', text: '请填写正确的手机号码' })
   } else {
-    MessageMainVue({ type: 'success', text: res.data.message })
+    if (checkedval.value !== true) {
+      MessageMainVue({ type: 'success', text: '请勾选用户协议' })
+    } else {
+      let res = await postpasswordrAPI({
+        mobile: mobiles.value,
+        password: password.value
+      })
+      console.log(res)
+      if (res.data.message == '请求成功') {
+        router.push('/home')
+        localStorage.setItem('token', res.data.data.token)
+        MessageMainVue({ type: 'success', text: '登录成功~' })
+      } else {
+        MessageMainVue({ type: 'success', text: res.data.message })
+      }
+    }
   }
 }
 // 去注册
