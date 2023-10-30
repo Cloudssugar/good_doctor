@@ -17,13 +17,13 @@
           </div>
           <div class="menu-first-item">
             <img src="https://youyi.itheima.net/static/inquiry-prescribe.a792b5e7.png" alt="" />
-            <div class="title">问医生</div>
-            <div class="title2">按科室查问医生</div>
+            <div class="title">图文问诊</div>
+            <div class="title2">20s医生快速回复</div>
           </div>
-          <div class="menu-first-item">
+          <div class="menu-first-item" @click="toprescribe">
             <img src="https://youyi.itheima.net/static/inquiry-graphic.f62a14ff.png" alt="" />
-            <div class="title">问医生</div>
-            <div class="title2">按科室查问医生</div>
+            <div class="title">开药问诊</div>
+            <div class="title2">线上买药更方便</div>
           </div>
         </div>
         <div class="menu-second-list">
@@ -33,15 +33,15 @@
           </div>
           <div class="menu-second-item">
             <img src="/src/assets/home/dangan.png" alt="" />
-            <div class="title">药品订单</div>
+            <div class="title">健康档案</div>
           </div>
           <div class="menu-second-item">
             <img src="/src/assets/home/chufang.png" alt="" />
-            <div class="title">药品订单</div>
+            <div class="title">我的处方</div>
           </div>
           <div class="menu-second-item">
             <img src="/src/assets/home/chaxun.png" alt="" />
-            <div class="title">药品订单</div>
+            <div class="title">疾病查询</div>
           </div>
         </div>
       </div>
@@ -53,6 +53,12 @@
 
 <script setup>
 import tabbar from '../../components/comcom/tabbar.vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const toprescribe = () => {
+  router.push('/prescribe')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -115,6 +121,7 @@ $themecolor: #16c2a3;
         }
         .title2 {
           font-size: 0.25rem;
+          color: rgb(124, 124, 124);
         }
       }
     }
