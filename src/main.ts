@@ -15,5 +15,7 @@ import 'vant/lib/index.css'
 import { Button } from 'vant';
 import { Icon } from 'vant';
 import { Form, Field, CellGroup } from 'vant';
+import { NoticeBar } from 'vant';
+import { Uploader } from 'vant';
 
-createApp(App).use(router).use(Button).use(Icon).use(Form).use(Field).use(CellGroup).mount('#app')
+createApp(App).use(router).use(Button).use(Icon).use(Form).use(Field).use(CellGroup).use(NoticeBar).use(Uploader).mount('#app')

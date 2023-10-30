@@ -61,8 +61,8 @@
 <script setup>
 import MessageMainVue from '../components/ts/message.ts'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { getcodeAPI, postcodeloginAPI, postpasswordrAPI } from '../api/login.ts'
+import { useRouter } from 'vue-router'
 const router = useRouter()
 
 // 手机号
