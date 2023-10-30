@@ -26,6 +26,11 @@ const routes = [
     path: '/prescribe',
     name: 'prescribe',
     component: () => import('../views/home/prescribe.vue') 
+  },
+  {
+    path: '/choosePatient',
+    name: 'choosePatient',
+    component: () => import('../views/home/choosePatient.vue') 
   }
 ]
 const router = createRouter({
