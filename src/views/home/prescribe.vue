@@ -158,13 +158,14 @@ const afterRead = (file) => {
 <style lang="scss" scoped>
 $themecolor: #16c2a3;
 .top {
+  box-sizing: border-box;
   position: fixed;
   left: 0;
   top: 0;
   z-index: 99;
-  width: 90%;
+  width: 100%;
   height: 0.8rem;
-  margin-left: 0.3rem;
+  padding-left: 0.3rem;
   display: flex;
   justify-content: space-between;
   align-items: center;

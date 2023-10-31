@@ -19,5 +19,8 @@ import { NoticeBar } from 'vant';
 import { Uploader } from 'vant';
 import { RadioGroup, Radio } from 'vant';
 import { AddressList } from 'vant'
+import { Search } from 'vant';
+import { Card } from 'vant';
+import { SubmitBar } from 'vant';
 
-createApp(App).use(router).use(Button).use(Icon).use(Form).use(Field).use(CellGroup).use(NoticeBar).use(Uploader).use(Radio).use(RadioGroup).use(AddressList).mount('#app')
+createApp(App).use(router).use(Button).use(Icon).use(Form).use(Field).use(CellGroup).use(NoticeBar).use(Uploader).use(Radio).use(RadioGroup).use(AddressList).use(Search).use(Card).use(SubmitBar).mount('#app')

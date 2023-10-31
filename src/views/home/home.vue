@@ -65,6 +65,7 @@ const toprescribe = () => {
 $themecolor: #16c2a3;
 .box {
   .top {
+     box-sizing: border-box;
     position: relative;
     width: 100%;
     height: 1.6rem;
