@@ -144,8 +144,8 @@ const tabac4 = (index) => {
 
 // 下一步
 const getnext = async () => {
-  const res = await getmylistAPI()
-  console.log(res)
+  // const res = await getmylistAPI()
+  // console.log(res)
   router.push('/choosePatient')
 }
 
