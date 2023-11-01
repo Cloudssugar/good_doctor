@@ -56,7 +56,7 @@
       <div class="top">
         <van-icon @click="editback" name="arrow-left" />
         <span>编辑患者</span>
-        <span class="span" @click="add">保存并选择</span>
+        <span class="span" @click="getedit">保存并选择</span>
       </div>
       <div class="aa"></div>
       <div>
@@ -80,7 +80,7 @@
 <script setup>
 // 引入消息 文件
 import MessageMainVue from '../../components/ts/message.ts'
-import { postaddAPI, getmylistAPI, delpatientAPI } from '../../api/home.ts'
+import { postaddAPI, getmylistAPI, delpatientAPI, deitupdateAPI } from '../../api/home.ts'
 import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
@@ -146,12 +146,12 @@ const blur = () => {
 // 编辑患者页面
 const iseditbox = ref(false)
 const editlist = ref({})
-const delidCard = ref('')
+const delid = ref('')
 // const genders = ref('')
 // const defaultFlags = ref('')
 const edit = (item) => {
   editlist.value = item
-  delidCard.value = item.idCard
+  delid.value = item.id
   console.log(editlist.value)
   // genders.value = editlist.value.gender
   // defaultFlags.value = editlist.value.defaultFlag
@@ -163,8 +163,40 @@ const edit = (item) => {
 
 // 删除患者
 const delpatient = async () => {
-  let res = await delpatientAPI(delidCard.value)
+  let res = await delpatientAPI(delid.value)
   console.log(res)
+  if (res.data.message == '请求成功') {
+    MessageMainVue({ type: 'success', text: '删除成功~' })
+    isbox.value = true
+    isboxs.value = false
+    iseditbox.value = false
+    getlist()
+  } else {
+    MessageMainVue({ type: 'success', text: res.data.message })
+  }
+}
+
+// 保存编辑后的信息
+const getedit = async () => {
+  console.log(editlist.value)
+  let res = await deitupdateAPI({
+    name: editlist.value.name,
+    idCard: editlist.value.idCard,
+    gender: editlist.value.gender,
+    defaultFlag: editlist.value.defaultFlag,
+    id: editlist.value.id
+  })
+  console.log(res)
+
+  if (res.data.message == '请求成功') {
+    MessageMainVue({ type: 'success', text: '修改成功~' })
+    isbox.value = true
+    isboxs.value = false
+    iseditbox.value = false
+    getlist()
+  } else {
+    MessageMainVue({ type: 'success', text: res.data.message })
+  }
 }
 
 // 返回

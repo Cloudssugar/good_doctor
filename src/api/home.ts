@@ -16,7 +16,11 @@ export function delpatientAPI(params){
   return http.delete(`https://youyi-api.itheima.net/patient/del/${params}`)
 }
 
-// https://youyi-api.itheima.net/patient/medicine?current=1&pageSize=10&keyword=
+// 修改
+export function deitupdateAPI(params){
+  return http.put(`https://youyi-api.itheima.net/patient/update`,params)
+}
+
 // 药品列表
 export function getmedicinelistAPI(params){
   return http.get('https://youyi-api.itheima.net/patient/medicine?current=1&pageSize=10&keyword=',params)
