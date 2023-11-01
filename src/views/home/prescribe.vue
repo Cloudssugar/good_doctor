@@ -105,40 +105,42 @@ const tabac = (index) => {
   // console.log(index)
   num.value = index
 
-  if (textareaval.value == '' || num.value !== 'undefined' || num2.value == 'undefined' || num3.value == 'undefined' || num4.value == 'undefined') {
-    isbutton.value = false
-  } else {
-    isbutton.value = true
-  }
+  // if (textareaval.value == '' || num.value !== 'undefined' || num2.value == 'undefined' || num3.value == 'undefined' || num4.value == 'undefined') {
+  //   isbutton.value = false
+  // } else {
+  //   isbutton.value = true
+  // }
 }
 const tabac2 = (index) => {
   // console.log(index)
   num2.value = index
 
-  if (textareaval.value == '' || num.value == 'undefined' || num2.value !== 'undefined' || num3.value == 'undefined' || num4.value == 'undefined') {
-    isbutton.value = false
-  } else {
-    isbutton.value = true
-  }
+  // if (textareaval.value == '' || num.value == 'undefined' || num2.value !== 'undefined' || num3.value == 'undefined' || num4.value == 'undefined') {
+  //   isbutton.value = false
+  // } else {
+  //   isbutton.value = true
+  // }
 }
 const tabac3 = (index) => {
   // console.log(index)
   num3.value = index
 
-  if (textareaval.value == '' || num.value == 'undefined' || num2.value == 'undefined' || num3.value !== 'undefined' || num4.value == 'undefined') {
-    isbutton.value = false
-  } else {
-    isbutton.value = true
-  }
+  // if (textareaval.value == '' || num.value == 'undefined' || num2.value == 'undefined' || num3.value !== 'undefined' || num4.value == 'undefined') {
+  //   isbutton.value = false
+  // } else {
+  //   isbutton.value = true
+  // }
 }
 const tabac4 = (index) => {
   // console.log(index)
   num4.value = index
-  console.log(textareaval.value, num.value, num2.value, num3.value, num4.value)
-  if (textareaval.value !== '' && num.value !== 'undefined' && num2.value !== 'undefined' && num3.value !== 'undefined' && num4.value !== 'undefined') {
-    isbutton.value = true
-  } else {
+  console.log(textareaval.value == '' || num.value == 'undefined' || num2.value == 'undefined' || num3.value == 'undefined' )
+  if ((textareaval.value == '' || num.value == 'undefined' || num2.value == 'undefined' || num3.value == 'undefined' ) == true) {
     isbutton.value = false
+    console.log('000000')
+  } else {
+    console.log('99999999')
+    isbutton.value = true
   }
 }
 
