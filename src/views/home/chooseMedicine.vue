@@ -36,17 +36,17 @@
 
     <!-- 商品清单 -->
     <div class="box" @click="getcarts" v-show="iscart"></div>
-    <div class="cart"  v-show="iscart">
-      <div class="detailed-list"><span>药品清单</span> 共2件商品 <van-icon name="delete-o" style="float: rigth" /> 清空</div>
+    <div class="cart" v-show="iscart">
+      <div class="detailed-list"><span>药品清单</span> 共{{ countnum }}件商品 <van-icon @click="getdelcart" name="delete-o" style="float: rigth" /> 清空</div>
       <!-- 商品列表 -->
       <div class="list">
-        <van-card v-for="(item, index) in medicinelist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
+        <van-card v-for="(item, index) in medicinelist" :key="item.id" v-show="item.num" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
           <template #tags>
             <van-tag plain type="primary">{{ item.specs }}</van-tag>
           </template>
           <template #footer>
-            <van-button v-show="item.num" @click="jian(item)" plain icon="minus" color="#16c2a3" round size="mini"></van-button>
-            <span v-show="item.num">x{{ item.num }}</span>
+            <van-button @click="jian(item)" plain icon="minus" color="#16c2a3" round size="mini"></van-button>
+            <span>x{{ item.num }}</span>
             <van-button @click="jia(item)" plain icon="plus" color="#16c2a3" round size="mini"></van-button>
           </template>
         </van-card>
@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import { getmedicinelistAPI } from '../../api/home.ts'
+import { getmedicinelistAPI, postselectedAPI } from '../../api/home.ts'
 import { showToast } from 'vant'
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -89,8 +89,13 @@ const jian = (item) => {
 }
 
 // 数量加
-const jia = (item) => {
+const jia = async (item) => {
   item.num++
+  let res = await postselectedAPI({
+    id: item.id,
+    quantity: item.num
+  })
+  console.log(res)
 }
 
 // 商品总价格
@@ -108,12 +113,48 @@ const countnum = computed(() => {
 })
 
 //
+const getdelcart = async () => {
+  // let res = await postdelcartAPI()
+  // console.log(res)
+}
+
+//
 const getcart = () => {
   iscart.value = true
+  stopMove()
 }
 const getcarts = () => {
   console.log(iscart.value)
   iscart.value = false
+  Move()
+}
+
+//停止页面滚动
+const stopMove = () => {
+  let m = function (e) {
+    // 阻止浏览器的默认行为
+    e.preventDefault()
+  }
+  document.body.style.overflow = 'hidden'
+  // 元素添加监听事件
+  // 有三个参数（事件名称，执行函数,触发类型 布尔值）
+  //1. 点击事件直接写："click"，键盘事件写："keyup"，
+  //2. 填需要执行的函数
+  //  当目标对象事件触发时，会传入一个事件参数，参数名称可自定义，如填写event，不需要也可不填写。 事件对象的类型取决于特定的事件。例如， “click” 事件属于 MouseEvent(鼠标事件) 对象。
+
+  //3. true - 事件在捕获阶段执行   false - 事件在冒泡阶段执行，默认是false
+  // passive   来提高浏览器响应速度，提升用户体验
+  document.addEventListener('touchmove', m, { passive: false }) //禁止页面滑动
+}
+
+//开启页面滚动
+const Move = () => {
+  let m = function (e) {
+    e.preventDefault()
+  }
+  document.body.style.overflow = '' //出现滚动条
+  // 移除事件
+  document.removeEventListener('touchmove', m, { passive: true })
 }
 
 // 返回
@@ -156,7 +197,7 @@ $themecolor: #16c2a3;
   background: rgba(77, 77, 77, 0.522);
 }
 .cart {
-  overflow-y: scroll;
+  overflow-y: auto;
   width: 100%;
   height: 60%;
   z-index: 99;
@@ -182,8 +223,6 @@ $themecolor: #16c2a3;
     }
   }
   .list {
-    overflow-y: auto;
-    overflow: hidden;
   }
 }
 </style>

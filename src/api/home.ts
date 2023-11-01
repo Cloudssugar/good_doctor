@@ -11,12 +11,12 @@ export function postaddAPI(params){
   return http.post('https://youyi-api.itheima.net/patient/add',params)
 }
 
-// 删除 
+// 删除 患者
 export function delpatientAPI(params){
   return http.delete(`https://youyi-api.itheima.net/patient/del/${params}`)
 }
 
-// 修改
+// 修改患者
 export function deitupdateAPI(params){
   return http.put(`https://youyi-api.itheima.net/patient/update`,params)
 }
@@ -25,3 +25,15 @@ export function deitupdateAPI(params){
 export function getmedicinelistAPI(params){
   return http.get('https://youyi-api.itheima.net/patient/medicine?current=1&pageSize=10&keyword=',params)
 }
+
+// 
+export function postselectedAPI(params){
+  return http.post('https://youyi-api.itheima.net/patient/medicine/selected/pre',params)
+}
+
+// 删除购物车数据
+// export function postdelcartAPI(params){
+//   return http.post('https://youyi-api.itheima.net/patient/medicine/selected/pre',params)
+// }
+
+

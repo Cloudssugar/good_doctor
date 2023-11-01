@@ -147,15 +147,10 @@ const blur = () => {
 const iseditbox = ref(false)
 const editlist = ref({})
 const delid = ref('')
-// const genders = ref('')
-// const defaultFlags = ref('')
 const edit = (item) => {
   editlist.value = item
   delid.value = item.id
   console.log(editlist.value)
-  // genders.value = editlist.value.gender
-  // defaultFlags.value = editlist.value.defaultFlag
-  // console.log(genders)
   isbox.value = false
   isboxs.value = false
   iseditbox.value = true
