@@ -36,6 +36,11 @@ const routes = [
     path: '/chooseMedicine',
     name: 'chooseMedicine',
     component: () => import('../views/home/chooseMedicine.vue') 
+  },
+  {
+    path: '/medicineDetail/:id?',
+    name: 'medicineDetail',
+    component: () => import('../views/home/medicineDetail.vue') 
   }
 ]
 const router = createRouter({

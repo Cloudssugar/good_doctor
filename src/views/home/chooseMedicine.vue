@@ -16,7 +16,7 @@
     </div>
     <!-- 商品列表 -->
     <div class="list">
-      <van-card v-for="(item, index) in medicinelist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
+      <van-card v-for="(item, index) in medicinelist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar" @click="todetail(item)">
         <template #tags>
           <van-tag plain type="primary">{{ item.specs }}</van-tag>
         </template>
@@ -118,13 +118,22 @@ const getdelcart = async () => {
   // console.log(res)
 }
 
-//
+// 进入药品详情页
+const todetail=(item)=>{
+  router.push({
+    name:'medicineDetail',
+    params:{id:item.id}
+  })
+}
+
+// 打开清单模态框
 const getcart = () => {
   iscart.value = true
   stopMove()
 }
+//  关闭清单模态框
 const getcarts = () => {
-  console.log(iscart.value)
+  // console.log(iscart.value)
   iscart.value = false
   Move()
 }

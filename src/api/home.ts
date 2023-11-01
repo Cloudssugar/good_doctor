@@ -26,7 +26,7 @@ export function getmedicinelistAPI(params){
   return http.get('https://youyi-api.itheima.net/patient/medicine?current=1&pageSize=10&keyword=',params)
 }
 
-// 
+// 购物车数据
 export function postselectedAPI(params){
   return http.post('https://youyi-api.itheima.net/patient/medicine/selected/pre',params)
 }
@@ -35,5 +35,11 @@ export function postselectedAPI(params){
 // export function postdelcartAPI(params){
 //   return http.post('https://youyi-api.itheima.net/patient/medicine/selected/pre',params)
 // }
+
+
+// 药品详情
+export function getmedicinedAPI(params){
+  return http.get(`https://youyi-api.itheima.net/patient/medicine/${params}`)
+}
 
 
