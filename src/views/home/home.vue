@@ -10,7 +10,7 @@
       <!--  -->
       <div class="menus-container">
         <div class="menu-first-list">
-          <div class="menu-first-item">
+          <div class="menu-first-item" @click="tofindDoctor">
             <img src="/src/assets/home/yisheng.png" alt="" />
             <div class="title">问医生</div>
             <div class="title2">按科室查问医生</div>
@@ -56,8 +56,14 @@ import tabbar from '../../components/comcom/tabbar.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
+// 开药问诊
 const toprescribe = () => {
   router.push('/prescribe')
+}
+
+//问医生
+const tofindDoctor = () => {
+  router.push('/findDoctor')
 }
 </script>
 
@@ -65,7 +71,7 @@ const toprescribe = () => {
 $themecolor: #16c2a3;
 .box {
   .top {
-     box-sizing: border-box;
+    box-sizing: border-box;
     position: relative;
     width: 100%;
     height: 1.6rem;
