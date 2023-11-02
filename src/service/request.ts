@@ -4,7 +4,7 @@ import axios from 'axios'
 // 创建 axios 实例
 const service=axios.create({
   // 公共接口前缀 正常应该从环境变量中获得
-  baseURL:'',
+  baseURL:'https://youyi-api.itheima.net',
   timeout:3000,
   // 表示跨域请求时是否需要使用凭证
   withCredentials:false   //default

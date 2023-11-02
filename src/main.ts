@@ -10,6 +10,12 @@ import router from './router/index'
 // 使用路由
 // const app = createApp(App)
 
+//  引入 pinia
+import { createPinia } from 'pinia'
+const pinia = createPinia()
+
+
+
 // main.js 引入样式   使用一个引入一个
 import 'vant/lib/index.css'
 import { Button } from 'vant';
@@ -23,4 +29,4 @@ import { Search } from 'vant';
 import { Card } from 'vant';
 import { SubmitBar } from 'vant';
 
-createApp(App).use(router).use(Button).use(Icon).use(Form).use(Field).use(CellGroup).use(NoticeBar).use(Uploader).use(Radio).use(RadioGroup).use(AddressList).use(Search).use(Card).use(SubmitBar).mount('#app')
+createApp(App).use(router).use(pinia).use(Button).use(Icon).use(Form).use(Field).use(CellGroup).use(NoticeBar).use(Uploader).use(Radio).use(RadioGroup).use(AddressList).use(Search).use(Card).use(SubmitBar).mount('#app')

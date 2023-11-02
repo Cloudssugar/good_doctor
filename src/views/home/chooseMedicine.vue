@@ -16,9 +16,9 @@
     </div>
     <!-- 商品列表 -->
     <div class="list">
-      <van-card v-for="(item, index) in medicinelist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar" @click="todetail(item)">
+      <van-card v-for="(item, index) in medicinelist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
         <template #tags>
-          <van-tag plain type="primary">{{ item.specs }}</van-tag>
+          <van-tag @click="todetail(item)" plain type="primary">{{ item.specs }}2</van-tag>
         </template>
         <template #footer>
           <van-button v-show="item.num" @click="jian(item)" plain icon="minus" color="#16c2a3" round size="mini"></van-button>
@@ -27,19 +27,21 @@
         </template>
       </van-card>
     </div>
+
+    <drudlist :price="price" :countnum="countnum" :druglist="druglist" :title='title'></drudlist>
     <!-- 提交订单 -->
-    <div>
+    <!-- <div>
       <van-submit-bar :price="price * 100" button-color="#16c2a3" button-text="申请开方" @submit="onSubmit" style="width: 100%; height: 60px">
         <van-icon @click="getcart" size="0.6rem" :badge="countnum" color="#16c2a3" name="bag" />
       </van-submit-bar>
-    </div>
+    </div> -->
 
     <!-- 商品清单 -->
-    <div class="box" @click="getcarts" v-show="iscart"></div>
+    <!-- <div class="box" @click="getcarts" v-show="iscart"></div>
     <div class="cart" v-show="iscart">
-      <div class="detailed-list"><span>药品清单</span> 共{{ countnum }}件商品 <van-icon @click="getdelcart" name="delete-o" style="float: rigth" /> 清空</div>
-      <!-- 商品列表 -->
-      <div class="list">
+      <div class="detailed-list"><span>药品清单</span> 共{{ countnum }}件商品 <van-icon @click="getdelcart" name="delete-o" style="float: rigth" /> 清空</div> -->
+    <!-- 商品列表 -->
+    <!-- <div class="list">
         <van-card v-for="(item, index) in medicinelist" :key="item.id" v-show="item.num" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
           <template #tags>
             <van-tag plain type="primary">{{ item.specs }}</van-tag>
@@ -51,11 +53,12 @@
           </template>
         </van-card>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script setup>
+import drudlist from '../../components/comcom/druglist.vue'
 import { getmedicinelistAPI, postselectedAPI } from '../../api/home.ts'
 import { showToast } from 'vant'
 import { ref, reactive, onMounted, computed } from 'vue'
@@ -64,12 +67,14 @@ const router = useRouter()
 onMounted(() => {
   getlist()
 })
-
+const title=ref('申请开方')
 const value = ref('')
+// const druglists =ref([])
 const onSearch = (val) => showToast(val)
 const onClickButton = () => showToast(value.value)
 
 const medicinelist = ref([])
+const druglist = ref([])
 const iscart = ref(false)
 
 // 请求药品列表
@@ -86,16 +91,27 @@ const getlist = async () => {
 const jian = (item) => {
   if (item.num == 0) return
   item.num--
+  if (item.num <= 1) {
+    druglist.value.splice(1)
+  }
+  localStorage.setItem('druglist', JSON.stringify(druglist.value))
+  console.log(druglist.value)
 }
 
 // 数量加
 const jia = async (item) => {
   item.num++
-  let res = await postselectedAPI({
-    id: item.id,
-    quantity: item.num
-  })
-  console.log(res)
+  if (item.num <= 1) {
+    druglist.value.push(item)
+  }
+  localStorage.setItem('druglist', JSON.stringify(druglist.value))
+  console.log(druglist.value)
+
+  // let res = await postselectedAPI({
+  //   id: item.id,
+  //   quantity: item.num
+  // })
+  // console.log(res)
 }
 
 // 商品总价格
@@ -119,10 +135,10 @@ const getdelcart = async () => {
 }
 
 // 进入药品详情页
-const todetail=(item)=>{
+const todetail = (item) => {
   router.push({
-    name:'medicineDetail',
-    params:{id:item.id}
+    name: 'medicineDetail',
+    params: { id: item.id }
   })
 }
 
@@ -233,5 +249,8 @@ $themecolor: #16c2a3;
   }
   .list {
   }
+}
+.van-button {
+  z-index: 99;
 }
 </style>

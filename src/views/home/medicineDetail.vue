@@ -1,5 +1,5 @@
 <template>
-  <div class="box">
+  <div class="detail">
     <div class="top">
       <van-icon @click="toback" name="arrow-left" />
       <span>{{ detaillist.name }}</span>
@@ -16,6 +16,7 @@
       <div>*处方药须凭处方在执业药师指导下购买和使用</div>
     </div>
     <div class="message">
+      <div style="height: 0.2rem"></div>
       <div class="content">
         <div>药品名称</div>
         <div>{{ detaillist.name }}</div>
@@ -69,15 +70,19 @@
         <div>{{ detaillist.manufacturer }}</div>
       </div>
     </div>
-     <div>
+
+    <druglist :druglist="druglists" :price="price" :countnum="countnum" :title="title" :detaillist="detaillist" @medicinebox="medicinebox"> </druglist>
+
+    <!-- <div>
       <van-submit-bar :price="price * 100" button-color="#16c2a3" button-text="申请开方" @submit="onSubmit" style="width: 100%; height: 60px">
         <van-icon @click="getcart" size="0.6rem" :badge="countnum" color="#16c2a3" name="bag" />
       </van-submit-bar>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script setup>
+import druglist from '../../components/comcom/druglist.vue'
 import { getmedicinedAPI } from '../../api/home.ts'
 import { ref, reactive, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -85,9 +90,14 @@ const router = useRouter()
 const route = useRoute()
 onMounted(() => {
   getdetail()
+  getdrud()
 })
 // console.log(route.params.id)
 const detaillist = ref({})
+const iscart = ref(false)
+const druglists =ref([]) 
+const title = ref('加入药箱')
+
 const getdetail = async () => {
   let detailid = route.params.id
   // console.log(detailid, route.params.id)
@@ -97,15 +107,41 @@ const getdetail = async () => {
   console.log(detaillist.value)
 }
 
-// 
-const toback=()=>{
+const getdrud = () => {
+  druglists.value = JSON.parse(localStorage.getItem('druglist'))
+  console.log(druglists.value)
+}
+
+// 商品总价格
+const price = computed(() => {
+  return druglists.value.reduce((p, c) => {
+    return (p += c.num * c.amount)
+  }, 0)
+})
+
+// 商品总数：
+const countnum = computed(() => {
+  return druglists.value.reduce((p, c) => {
+    return (p += c.num)
+  }, 0)
+})
+
+//
+const medicinebox = (detaillist) => {
+  console.log(detaillist, druglists.value)
+  druglists.value.push(detaillist)
+  localStorage.setItem('druglist', JSON.stringify(druglists.value))
+}
+
+//
+const toback = () => {
   router.push('/chooseMedicine')
 }
 </script>
 
 <style lang="scss" scoped>
 $themecolor: #16c2a3;
-.box {
+.detail {
   background: #eeeeee;
 }
 .top {
@@ -175,11 +211,11 @@ $themecolor: #16c2a3;
     margin-top: 0.3rem;
   }
   .content :nth-child(1) {
-    font-size: 0.4rem;
+    font-size: 0.35rem;
   }
   .content :nth-child(2) {
     color: rgb(79, 79, 79);
-    font-size: 0.3rem;
+    font-size: 0.28rem;
   }
 }
 </style>
