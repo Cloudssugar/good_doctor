@@ -53,7 +53,7 @@
     <!-- 第三方登录 -->
     <div class="qq">
       <p>-- 第三方登录 --</p>
-      <img src="/src/assets/QQ.svg" alt="" />
+      <img @click="qgLogin" src="/src/assets/QQ.svg" alt="" />
     </div>
   </div>
 </template>
@@ -167,6 +167,15 @@ const getpasslogin = async () => {
 // 去注册
 const toregister = () => {
   router.push('/register')
+}
+
+// qq登录
+const qgLogin = () => {
+  console.log('qqqqqq')
+  window.location.href = QC.Login.insertButton._getPopupUrl({
+    appId: '102015968',
+    redirectURI: 'http://consult-patients.itheima.net/login/callback'
+  })
 }
 </script>
 

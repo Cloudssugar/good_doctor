@@ -4,6 +4,11 @@ import vue from '@vitejs/plugin-vue'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  server:{
+    host:true,
+    port:80
+  },
+ 
   // css: {
   //   preprocessorOptions: {
   //     scss: {
@@ -12,3 +17,6 @@ export default defineConfig({
   //   }
   // }
 })
+// chainWebpack=>{
+//   config.decServer.disableHostCheck(true)
+// }
