@@ -13,13 +13,13 @@
       <div class="detailed-list"><span>药品清单</span> 共{{ countnum }}件商品 <van-icon name="delete-o" style="float: rigth" /> 清空</div>
       <!-- 商品列表 -->
       <div class="list">
-        <van-card v-for="(item, index) in druglist" :key="item.id" v-show="item.num" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
+        <van-card v-for="(item, index) in props.druglist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
           <template #tags>
             <van-tag plain type="primary">{{ item.specs }}</van-tag>
           </template>
           <template #footer>
             <van-button @click="jian(item)" plain icon="minus" color="#16c2a3" round size="mini"></van-button>
-            <span>x{{ item.num }}</span>
+            <span>x{{ item.quantity }}</span>
             <van-button @click="jia(item)" plain icon="plus" color="#16c2a3" round size="mini"></van-button>
           </template>
         </van-card>
@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, defineProps, defineEmits } from 'vue'
+import { reactive, ref, defineProps, defineEmits, toRefs } from 'vue'
 
 //接收父组件传来的属性值
 const props = defineProps({
@@ -39,7 +39,9 @@ const props = defineProps({
   title: String,
   detaillist: Object
 })
-
+//此处必须用toRefs，否则将失去响应式
+const { druglist } = toRefs(props)
+console.log(props.druglist, '000000000')
 const iscart = ref(false)
 const detaillist = ref({})
 
@@ -53,13 +55,47 @@ const jian = (item) => {
 // 数量加
 const jia = async (item) => {
   item.num++
-  localStorage.setItem('druglist', JSON.stringify(props.druglist))
-  // let res = await postselectedAPI({
-  //   id: item.id,
-  //   quantity: item.num
-  // })
-  // console.log(res)
+  // if (item.num <= 1) {
+  //   druglist.push(item)
+  // }
+  // localStorage.setItem('druglist', JSON.stringify(druglist))
+  // console.log(druglist)
+
+  addApiList.data.push({ id: item.id, quantity: item.num })
+
+  addApiList.data = arrayUnique(addApiList.data, 'id')
+  // 接口请求
+  let res = await postselectedAPI(addApiList.data)
+  console.log(res)
+  druglist = res.data.data.medicines
+  console.log(druglist)
+  price.value = res.data.data.actualPayment
 }
+
+// 去重的方法
+const arrayUnique = (arr, name) => {
+  let hash = {}
+  return arr.reduce((acc, cru, index) => {
+    if (!hash[cru[name]]) {
+      hash[cru[name]] = { index: acc.length }
+      acc.push(cru)
+    } else {
+      acc.splice(hash[cru[name]]['index'], 1, cru)
+    }
+    return acc
+  }, [])
+}
+
+// // 数量加
+// const jia = async (item) => {
+//   item.num++
+//   localStorage.setItem('druglist', JSON.stringify(props.druglist))
+//   // let res = await postselectedAPI({
+//   //   id: item.id,
+//   //   quantity: item.num
+//   // })
+//   // console.log(res)
+// }
 
 // 打开清单模态框
 const getcart = () => {

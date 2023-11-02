@@ -27,33 +27,33 @@
         </template>
       </van-card>
     </div>
-
-    <drudlist :price="price" :countnum="countnum" :druglist="druglist" :title='title'></drudlist>
+    <!-- 
+    <drudlist :price="price" :countnum="countnum" :druglist="druglist" :title="title"></drudlist> -->
     <!-- 提交订单 -->
-    <!-- <div>
+    <div>
       <van-submit-bar :price="price * 100" button-color="#16c2a3" button-text="申请开方" @submit="onSubmit" style="width: 100%; height: 60px">
         <van-icon @click="getcart" size="0.6rem" :badge="countnum" color="#16c2a3" name="bag" />
       </van-submit-bar>
-    </div> -->
+    </div>
 
     <!-- 商品清单 -->
-    <!-- <div class="box" @click="getcarts" v-show="iscart"></div>
+    <div class="box" @click="getcarts" v-show="iscart"></div>
     <div class="cart" v-show="iscart">
-      <div class="detailed-list"><span>药品清单</span> 共{{ countnum }}件商品 <van-icon @click="getdelcart" name="delete-o" style="float: rigth" /> 清空</div> -->
-    <!-- 商品列表 -->
-    <!-- <div class="list">
-        <van-card v-for="(item, index) in medicinelist" :key="item.id" v-show="item.num" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
+      <div class="detailed-list"><span>药品清单</span> 共{{ countnum }}件商品 <van-icon @click="getdelcart" name="delete-o" style="float: rigth" /> 清空</div>
+      <!-- 商品列表 -->
+      <div class="list">
+        <van-card v-for="(item, index) in druglist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
           <template #tags>
             <van-tag plain type="primary">{{ item.specs }}</van-tag>
           </template>
           <template #footer>
             <van-button @click="jian(item)" plain icon="minus" color="#16c2a3" round size="mini"></van-button>
-            <span>x{{ item.num }}</span>
-            <van-button @click="jia(item)" plain icon="plus" color="#16c2a3" round size="mini"></van-button>
+            <span>x{{ count }}</span>
+            <van-button @click="jias(item)" plain icon="plus" color="#16c2a3" round size="mini"></van-button>
           </template>
         </van-card>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -67,15 +67,19 @@ const router = useRouter()
 onMounted(() => {
   getlist()
 })
-const title=ref('申请开方')
+const title = ref('申请开方')
 const value = ref('')
 // const druglists =ref([])
 const onSearch = (val) => showToast(val)
 const onClickButton = () => showToast(value.value)
 
 const medicinelist = ref([])
-const druglist = ref([])
+let druglist = reactive([])
 const iscart = ref(false)
+const addApiList = reactive({
+  data: []
+})
+const price = ref('')
 
 // 请求药品列表
 const getlist = async () => {
@@ -88,38 +92,70 @@ const getlist = async () => {
 }
 
 // 数量减
-const jian = (item) => {
+const jian = async (item) => {
   if (item.num == 0) return
   item.num--
-  if (item.num <= 1) {
-    druglist.value.splice(1)
-  }
-  localStorage.setItem('druglist', JSON.stringify(druglist.value))
-  console.log(druglist.value)
+  // if (item.num <= 1) {
+  //   druglist.splice(1)
+  // }
+  // localStorage.setItem('druglist', JSON.stringify(druglist))
+  // console.log(druglist)
+
+  addApiList.data.push({ id: item.id, quantity: item.num })
+
+  addApiList.data = arrayUnique(addApiList.data, 'id')
+  // 接口请求
+  let res = await postselectedAPI(addApiList.data)
+  console.log(res)
 }
 
 // 数量加
 const jia = async (item) => {
   item.num++
-  if (item.num <= 1) {
-    druglist.value.push(item)
-  }
-  localStorage.setItem('druglist', JSON.stringify(druglist.value))
-  console.log(druglist.value)
+  // if (item.num <= 1) {
+  //   druglist.push(item)
+  // }
+  // localStorage.setItem('druglist', JSON.stringify(druglist))
+  // console.log(druglist)
 
-  // let res = await postselectedAPI({
-  //   id: item.id,
-  //   quantity: item.num
-  // })
-  // console.log(res)
+  addApiList.data.push({ id: item.id, quantity: item.num })
+
+  addApiList.data = arrayUnique(addApiList.data, 'id')
+  // 接口请求
+  let res = await postselectedAPI(addApiList.data)
+  console.log(res)
+  druglist = res.data.data.medicines
+  console.log(druglist)
+  price.value = res.data.data.actualPayment
 }
 
-// 商品总价格
-const price = computed(() => {
-  return medicinelist.value.reduce((p, c) => {
-    return (p += c.num * c.amount)
-  }, 0)
-})
+//
+const jias = (item) => {
+  console.log(item.quantity)
+  let count = item.quantity++
+  console.log(count);
+}
+
+// 去重的方法
+const arrayUnique = (arr, name) => {
+  let hash = {}
+  return arr.reduce((acc, cru, index) => {
+    if (!hash[cru[name]]) {
+      hash[cru[name]] = { index: acc.length }
+      acc.push(cru)
+    } else {
+      acc.splice(hash[cru[name]]['index'], 1, cru)
+    }
+    return acc
+  }, [])
+}
+
+// // 商品总价格
+// const price = computed(() => {
+//   return medicinelist.value.reduce((p, c) => {
+//     return (p += c.num * c.amount)
+//   }, 0)
+// })
 
 // 商品总数：
 const countnum = computed(() => {
