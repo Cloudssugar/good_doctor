@@ -92,8 +92,10 @@ const jian = (item) => {
 const jia = async (item) => {
   item.num++
   let res = await postselectedAPI({
-    id: item.id,
-    quantity: item.num
+    params: {
+      id: item.id,
+      quantity: item.num
+    }
   })
   console.log(res)
 }
