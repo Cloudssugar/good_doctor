@@ -32,9 +32,9 @@ export function postselectedAPI(params){
 }
 
 // 删除购物车数据
-// export function postdelcartAPI(params){
-//   return http.post('/patient/medicine/selected/pre',params)
-// }
+export function postdelcartAPI(params){
+  return http.post('/patient/medicine/selected/pre',params)
+}
 
 
 // 药品详情

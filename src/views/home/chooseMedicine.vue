@@ -21,35 +21,37 @@
           <van-tag @click="todetail(item)" plain type="primary">{{ item.specs }}2</van-tag>
         </template>
         <template #footer>
-          <van-button v-show="item.num" @click="jian(item)" plain icon="minus" color="#16c2a3" round size="mini"></van-button>
-          <span v-show="item.num">x{{ item.num }}</span>
+          <van-button v-show="item.quantity" @click="jian(item)" plain icon="minus" color="#16c2a3" round size="mini"></van-button>
+          <span v-show="item.quantity">x{{ item.quantity }}</span>
           <van-button @click="jia(item)" plain icon="plus" color="#16c2a3" round size="mini"></van-button>
         </template>
       </van-card>
     </div>
-    <!-- 
-    <drudlist :price="price" :countnum="countnum" :druglist="druglist" :title="title"></drudlist> -->
-    <!-- 提交订单 -->
-    <div>
-      <van-submit-bar :price="price * 100" button-color="#16c2a3" button-text="申请开方" @submit="onSubmit" style="width: 100%; height: 60px">
-        <van-icon @click="getcart" size="0.6rem" :badge="countnum" color="#16c2a3" name="bag" />
-      </van-submit-bar>
-    </div>
 
+    <!-- <mydruglist :price="price" :countnum="countnum" :getdruglist="getdruglist" :title="title" :iscart="iscart" @getcarts="getcarts" :medicinelist="medicinelist">
+      <template v-slot:submitSlot>
+        <div> -->
+    <van-submit-bar :price="price * 100" button-color="#16c2a3" :button-text="title" @click="medicinebox" style="width: 100%; height: 60px">
+      <van-icon @click="getcart" size="0.6rem" :badge="countnum" color="#16c2a3" name="bag" />
+    </van-submit-bar>
+    <!-- </div>
+      </template>
+    </mydruglist> -->
+    <!-- 提交订单 -->
     <!-- 商品清单 -->
     <div class="box" @click="getcarts" v-show="iscart"></div>
     <div class="cart" v-show="iscart">
       <div class="detailed-list"><span>药品清单</span> 共{{ countnum }}件商品 <van-icon @click="getdelcart" name="delete-o" style="float: rigth" /> 清空</div>
       <!-- 商品列表 -->
       <div class="list">
-        <van-card v-for="(item, index) in druglist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
+        <van-card v-show="item.quantity" v-for="(item, index) in getdruglist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
           <template #tags>
             <van-tag plain type="primary">{{ item.specs }}</van-tag>
           </template>
           <template #footer>
-            <van-button @click="jian(item)" plain icon="minus" color="#16c2a3" round size="mini"></van-button>
-            <span>x{{ count }}</span>
-            <van-button @click="jias(item)" plain icon="plus" color="#16c2a3" round size="mini"></van-button>
+            <van-button v-show="item.quantity" @click="jian(item)" plain icon="minus" color="#16c2a3" round size="mini"></van-button>
+            <span v-show="item.quantity">x{{ item.quantity }}</span>
+            <van-button @click="jia(item)" plain icon="plus" color="#16c2a3" round size="mini"></van-button>
           </template>
         </van-card>
       </div>
@@ -58,7 +60,7 @@
 </template>
 
 <script setup>
-import drudlist from '../../components/comcom/druglist.vue'
+import mydruglist from '../../components/comcom/druglist.vue'
 import { getmedicinelistAPI, postselectedAPI } from '../../api/home.ts'
 import { showToast } from 'vant'
 import { ref, reactive, onMounted, computed } from 'vue'
@@ -69,71 +71,85 @@ onMounted(() => {
 })
 const title = ref('申请开方')
 const value = ref('')
-// const druglists =ref([])
+// let druglists = ref([])
 const onSearch = (val) => showToast(val)
 const onClickButton = () => showToast(value.value)
 
+// 列表
 const medicinelist = ref([])
-let druglist = reactive([])
+// 购物车列表
+let getdruglist = reactive([])
+// 购物车显示隐藏
 const iscart = ref(false)
+// 用来添加请求接口的参数
 const addApiList = reactive({
   data: []
 })
-const price = ref('')
+// 给 数量赋值
+// const quantitys = ref('')
+// const price = ref('')
 
 // 请求药品列表
 const getlist = async () => {
   let res = await getmedicinelistAPI()
   console.log(res)
+  // 动态添加数据
   for (var i = 0; i < res.data.data.rows.length; i++) {
-    res.data.data.rows[i].num = 0
+    res.data.data.rows[i].quantity = 0
   }
   medicinelist.value = res.data.data.rows
 }
 
 // 数量减
 const jian = async (item) => {
-  if (item.num == 0) return
-  item.num--
-  // if (item.num <= 1) {
-  //   druglist.splice(1)
-  // }
-  // localStorage.setItem('druglist', JSON.stringify(druglist))
-  // console.log(druglist)
-
-  addApiList.data.push({ id: item.id, quantity: item.num })
-
-  addApiList.data = arrayUnique(addApiList.data, 'id')
+  if (item.quantity == 0) return
+  // item.quantity--
+  //
+  medicinelist.value.map((item1) => {
+    if (item.id == item1.id) {
+      item1.quantity--
+    }
+  })
+  let arr = []
+  arr = medicinelist.value.filter((item) => item.quantity > 0)
+  //  请求接口的字段
+  // addApiList.data.push({ id: item.id, quantity: item.quantity })
+  // addApiList.data = arrayUnique(addApiList.data, 'id')
   // 接口请求
-  let res = await postselectedAPI(addApiList.data)
+  let res = await postselectedAPI(arr)
   console.log(res)
+  getdruglist = res.data.data.medicines
+  console.log(getdruglist)
+  localStorage.setItem('getdruglist', JSON.stringify(getdruglist))
+
+  if (getdruglist == '') {
+    iscart.value = false
+  } else {
+    iscart.value = true
+    stopMove()
+  }
 }
 
 // 数量加
-const jia = async (item) => {
-  item.num++
-  // if (item.num <= 1) {
-  //   druglist.push(item)
-  // }
-  // localStorage.setItem('druglist', JSON.stringify(druglist))
-  // console.log(druglist)
+const jia = async (item, index) => {
+  // item.quantity++
+  medicinelist.value.map((item1) => {
+    if (item.id == item1.id) {
+      item1.quantity++
+    }
+  })
+  let arr = []
+  arr = medicinelist.value.filter((item) => item.quantity > 0)
 
-  addApiList.data.push({ id: item.id, quantity: item.num })
-
-  addApiList.data = arrayUnique(addApiList.data, 'id')
+  //  请求接口的字段
+  // addApiList.data.push({ id: item.id, quantity: item.quantity })
+  // addApiList.data = arrayUnique(addApiList.data, 'id')
   // 接口请求
-  let res = await postselectedAPI(addApiList.data)
+  let res = await postselectedAPI(arr)
   console.log(res)
-  druglist = res.data.data.medicines
-  console.log(druglist)
-  price.value = res.data.data.actualPayment
-}
-
-//
-const jias = (item) => {
-  console.log(item.quantity)
-  let count = item.quantity++
-  console.log(count);
+  getdruglist = res.data.data.medicines
+  console.log(getdruglist)
+  localStorage.setItem('getdruglist', JSON.stringify(getdruglist))
 }
 
 // 去重的方法
@@ -151,16 +167,16 @@ const arrayUnique = (arr, name) => {
 }
 
 // // 商品总价格
-// const price = computed(() => {
-//   return medicinelist.value.reduce((p, c) => {
-//     return (p += c.num * c.amount)
-//   }, 0)
-// })
+const price = computed(() => {
+  return medicinelist.value.reduce((p, c) => {
+    return (p += c.quantity * c.amount)
+  }, 0)
+})
 
 // 商品总数：
 const countnum = computed(() => {
   return medicinelist.value.reduce((p, c) => {
-    return (p += c.num)
+    return (p += c.quantity)
   }, 0)
 })
 
@@ -174,18 +190,21 @@ const getdelcart = async () => {
 const todetail = (item) => {
   router.push({
     name: 'medicineDetail',
-    params: { id: item.id }
+    params: { id: JSON.stringify(item) }
   })
 }
 
 // 打开清单模态框
 const getcart = () => {
-  iscart.value = true
-  stopMove()
+  if (getdruglist == '') {
+    iscart.value = false
+  } else {
+    iscart.value = true
+    stopMove()
+  }
 }
 //  关闭清单模态框
 const getcarts = () => {
-  // console.log(iscart.value)
   iscart.value = false
   Move()
 }

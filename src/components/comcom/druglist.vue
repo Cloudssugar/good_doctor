@@ -1,19 +1,13 @@
 <template>
   <div>
-    <!-- 提交订单 -->
-    <div>
-      <van-submit-bar :price="price * 100" button-color="#16c2a3" :button-text="title" @click="medicinebox" style="width: 100%; height: 60px">
-        <van-icon @click="getcart" size="0.6rem" :badge="countnum" color="#16c2a3" name="bag" />
-      </van-submit-bar>
-    </div>
+    <slot name="submitSlot"></slot>
 
-    <!-- 商品清单 -->
-    <div class="box" v-if="countnum !== 0" @click="getcarts" v-show="iscart"></div>
-    <div class="cart" v-if="countnum !== 0" v-show="iscart">
-      <div class="detailed-list"><span>药品清单</span> 共{{ countnum }}件商品 <van-icon name="delete-o" style="float: rigth" /> 清空</div>
+    <div class="box" @click="getcarts" v-show="iscart"></div>
+    <div class="cart" v-show="iscart">
+      <div class="detailed-list"><span>药品清单</span> 共{{ countnum }}件商品 <van-icon @click="getdelcart" name="delete-o" style="float: rigth" /> 清空</div>
       <!-- 商品列表 -->
       <div class="list">
-        <van-card v-for="(item, index) in props.druglist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
+        <van-card v-for="(item, index) in getdruglist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
           <template #tags>
             <van-tag plain type="primary">{{ item.specs }}</van-tag>
           </template>
@@ -29,47 +23,75 @@
 </template>
 
 <script setup>
-import { reactive, ref, defineProps, defineEmits, toRefs } from 'vue'
+import { reactive, ref, toRefs } from 'vue'
+import { postdelcartAPI, postselectedAPI } from '../../api/home.ts'
 
 //接收父组件传来的属性值
 const props = defineProps({
   price: Number,
   countnum: Number,
-  druglist: Array,
+  getdruglist: Array,
   title: String,
-  detaillist: Object
+  detaillist: Object,
+  iscart: Boolean,
+  medicinelist: Array
 })
 //此处必须用toRefs，否则将失去响应式
-const { druglist } = toRefs(props)
-console.log(props.druglist, '000000000')
-const iscart = ref(false)
+const { getdruglist } = toRefs(props)
+console.log(props, '000000000')
 const detaillist = ref({})
+let druglists = reactive({
+  aa: []
+})
+const addApiList = reactive({
+  data: []
+})
 
 // 数量减
-const jian = (item) => {
-  if (item.num == 0) return
-  item.num--
-  localStorage.setItem('druglist', JSON.stringify(props.druglist))
-}
-
-// 数量加
-const jia = async (item) => {
-  item.num++
-  // if (item.num <= 1) {
-  //   druglist.push(item)
-  // }
-  // localStorage.setItem('druglist', JSON.stringify(druglist))
-  // console.log(druglist)
-
-  addApiList.data.push({ id: item.id, quantity: item.num })
-
+const jian = async (item) => {
+  if (item.quantity == 0) return
+  item.quantity--
+  // 请求接口的参数
+  addApiList.data.push({ id: item.id, quantity: item.quantity })
   addApiList.data = arrayUnique(addApiList.data, 'id')
   // 接口请求
   let res = await postselectedAPI(addApiList.data)
   console.log(res)
-  druglist = res.data.data.medicines
-  console.log(druglist)
-  price.value = res.data.data.actualPayment
+}
+
+// 数量加
+const jia = async (item, index) => {
+  // item.quantity++
+  medicinelist.map((item1) => {
+    if (item.id == item1.id) {
+      item1.quantity++
+    }
+  })
+  let arr = []
+  arr = medicinelist.filter((item) => item.quantity > 0)
+  // quantitys.value = item.quantity
+  //  请求接口的字段
+  // addApiList.data.push({ id: item.id, quantity: item.quantity })
+  // addApiList.data = arrayUnique(addApiList.data, 'id')
+  // 接口请求
+  let res = await postselectedAPI(arr)
+  console.log(res)
+  getdruglist = res.data.data.medicines
+  console.log(getdruglist)
+  localStorage.setItem('getdruglist', JSON.stringify(getdruglist))
+  //////////////////////////
+  // item.quantity++
+
+  // // 请求接口的参数
+  // addApiList.data.push({ id: item.id, quantity: item.quantity })
+  // addApiList.data = arrayUnique(addApiList.data, 'id')
+  // // 接口请求
+  // let res = await postselectedAPI(addApiList.data)
+  // console.log(res)
+  // getdruglist = res.data.data.medicines
+  // console.log(getdruglist)
+  // localStorage.setItem('druglist', JSON.stringify(druglist))
+  // medicinelist = JSON.parse(localStorage.getItem('druglist'))
 }
 
 // 去重的方法
@@ -86,65 +108,14 @@ const arrayUnique = (arr, name) => {
   }, [])
 }
 
-// // 数量加
-// const jia = async (item) => {
-//   item.num++
-//   localStorage.setItem('druglist', JSON.stringify(props.druglist))
-//   // let res = await postselectedAPI({
-//   //   id: item.id,
-//   //   quantity: item.num
-//   // })
-//   // console.log(res)
-// }
-
-// 打开清单模态框
-const getcart = () => {
-  iscart.value = true
-  stopMove()
-}
-//  关闭清单模态框
-const getcarts = () => {
-  // console.log(iscart.value)
-  iscart.value = false
-  Move()
-}
-
-//停止页面滚动
-const stopMove = () => {
-  let m = function (e) {
-    // 阻止浏览器的默认行为
-    e.preventDefault()
-  }
-  document.body.style.overflow = 'hidden'
-  // 元素添加监听事件
-  // 有三个参数（事件名称，执行函数,触发类型 布尔值）
-  //1. 点击事件直接写："click"，键盘事件写："keyup"，
-  //2. 填需要执行的函数
-  //  当目标对象事件触发时，会传入一个事件参数，参数名称可自定义，如填写event，不需要也可不填写。 事件对象的类型取决于特定的事件。例如， “click” 事件属于 MouseEvent(鼠标事件) 对象。
-
-  //3. true - 事件在捕获阶段执行   false - 事件在冒泡阶段执行，默认是false
-  // passive   来提高浏览器响应速度，提升用户体验
-  document.addEventListener('touchmove', m, { passive: false }) //禁止页面滑动
-}
-
-//开启页面滚动
-const Move = () => {
-  let m = function (e) {
-    e.preventDefault()
-  }
-  document.body.style.overflow = '' //出现滚动条
-  // 移除事件
-  document.removeEventListener('touchmove', m, { passive: true })
-}
-
 // 定义要发送的emit事件
-const emit = defineEmits(['medicinebox'])
+const emit = defineEmits(['medicinebox', 'getcarts'])
 let medicinebox = () => {
   emit('medicinebox', props.detaillist)
 }
-// let getcarts = () => {
-//   emit('getcarts', false)
-// }
+let getcarts = () => {
+  emit('getcarts', false)
+}
 </script>
 
 <style lang="scss" scoped>
