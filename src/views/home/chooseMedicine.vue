@@ -41,10 +41,10 @@
     <!-- 商品清单 -->
     <div class="box" @click="getcarts" v-show="iscart"></div>
     <div class="cart" v-show="iscart">
-      <div class="detailed-list"><span>药品清单</span> 共{{ countnum }}件商品 <van-icon @click="getdelcart" name="delete-o" style="float: rigth" /> 清空</div>
+      <div class="detailed-list"><span>药品清单</span> 共{{ countnum}}件商品 <van-icon @click="getdelcart" name="delete-o" style="float: rigth" /> 清空</div>
       <!-- 商品列表 -->
       <div class="list">
-        <van-card v-show="item.quantity" v-for="(item, index) in getdruglist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
+        <van-card v-show="item.quantity" v-for="(item, index) in addApiList.getdruglist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
           <template #tags>
             <van-tag plain type="primary">{{ item.specs }}</van-tag>
           </template>
@@ -83,7 +83,8 @@ let getdruglist = reactive([])
 const iscart = ref(false)
 // 用来添加请求接口的参数
 const addApiList = reactive({
-  data: []
+  data: [],
+  getdruglist: []
 })
 // 给 数量赋值
 // const quantitys = ref('')
@@ -98,6 +99,10 @@ const getlist = async () => {
     res.data.data.rows[i].quantity = 0
   }
   medicinelist.value = res.data.data.rows
+
+  //
+  addApiList.getdruglist = JSON.parse(localStorage.getItem('getdruglist'))
+  console.log(addApiList.getdruglist)
 }
 
 // 数量减
@@ -118,11 +123,11 @@ const jian = async (item) => {
   // 接口请求
   let res = await postselectedAPI(arr)
   console.log(res)
-  getdruglist = res.data.data.medicines
-  console.log(getdruglist)
-  localStorage.setItem('getdruglist', JSON.stringify(getdruglist))
+  addApiList.getdruglist = res.data.data.medicines
+  console.log(addApiList.getdruglist)
+  localStorage.setItem('getdruglist', JSON.stringify(addApiList.getdruglist))
 
-  if (getdruglist == '') {
+  if (addApiList.getdruglist == '') {
     iscart.value = false
   } else {
     iscart.value = true
@@ -147,9 +152,9 @@ const jia = async (item, index) => {
   // 接口请求
   let res = await postselectedAPI(arr)
   console.log(res)
-  getdruglist = res.data.data.medicines
-  console.log(getdruglist)
-  localStorage.setItem('getdruglist', JSON.stringify(getdruglist))
+  addApiList.getdruglist = res.data.data.medicines
+  console.log(addApiList.getdruglist)
+  localStorage.setItem('getdruglist', JSON.stringify(addApiList.getdruglist))
 }
 
 // 去重的方法
@@ -181,22 +186,22 @@ const countnum = computed(() => {
 })
 
 //
-const getdelcart = async () => {
-  // let res = await postdelcartAPI()
-  // console.log(res)
-}
+// const getdelcart = async () => {
+// let res = await postdelcartAPI()
+// console.log(res)
+// }
 
 // 进入药品详情页
 const todetail = (item) => {
   router.push({
     name: 'medicineDetail',
-    params: { id: JSON.stringify(item) }
+    params: { id: item.id }
   })
 }
 
 // 打开清单模态框
 const getcart = () => {
-  if (getdruglist == '') {
+  if (addApiList.getdruglist == '') {
     iscart.value = false
   } else {
     iscart.value = true
