@@ -43,9 +43,14 @@ const routes = [
     component: () => import('../views/home/chooseMedicine.vue') 
   },
   {
-    path: '/findDoctor',
-    name: 'findDoctor',
-    component: () => import('../views/askdoctor/findDoctor.vue') 
+    path: '/medicineDetail/:id?',
+    name: 'medicineDetail',
+    component: () => import('../views/home/medicineDetail.vue') 
+  },
+  {
+    path: '/chatRoom',
+    name: 'chatRoom',
+    component: () => import('../views/home/chatRoom.vue') 
   }
 ]
 const router = createRouter({
