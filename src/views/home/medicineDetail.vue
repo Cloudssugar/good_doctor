@@ -71,11 +71,12 @@
       </div>
     </div>
 
-    <!-- <mydruglist :price="price" :countnum="countnum" :medicinelist="medicinelist" :title="title" :iscart="iscart" @getcarts="getcarts">
+    <!--  -->
+    <!-- <mydruglist :price="price" :countnum="countnum" :addApiList="addApiList" :title="title" :iscart="iscart" @getcarts="getcarts">
       <template v-slot:submitSlot>
         <div> -->
     <van-submit-bar :price="price * 100" button-color="#16c2a3" :button-text="title" @submit="addmedicine(item)" style="width: 100%; height: 60px">
-      <van-icon @click="getcart" size="0.6rem" :badge="addApiList.getdruglist.length" color="#16c2a3" name="bag" />
+      <van-icon @click="getcart" size="0.6rem" :badge="0" color="#16c2a3" name="bag" />
     </van-submit-bar>
     <!-- </div>
       </template>
@@ -83,7 +84,7 @@
     <!-- 商品清单 -->
     <div class="box" @click="getcarts" v-show="iscart"></div>
     <div class="cart" v-show="iscart">
-      <div class="detailed-list"><span>药品清单</span> 共{{ addApiList.getdruglist.length }}件商品 <van-icon name="delete-o" style="float: rigth" /> 清空</div>
+      <div class="detailed-list"><span>药品清单</span> 共{{ 0 }}件商品 <van-icon name="delete-o" style="float: rigth" /> 清空</div>
       <!-- 商品列表 -->
       <div class="list">
         <van-card v-for="(item, index) in addApiList.getdruglist" :key="item.id" v-show="item.quantity" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
@@ -143,25 +144,28 @@ const getdetail = async () => {
 // // 加入药箱
 const addmedicine = async (item) => {
   // //查找之前数组是否有该商品
-  // let oldProduce = addApiList.getdruglist.find((item) => item.id === detailid.value)
-  // console.log(oldProduce)
-  // //判断oldProduce
-  // if (oldProduce) {
-  //   oldProduce.quantity += 1
-  // } else {
-  //   oldProduce.quantity = 1
-  //   // state.cartList.push(payload)
-  // }
+  const oldid = addApiList.getdruglist.find((i) => detailid.value === i.id)
+  console.log(oldid)
+  if (oldid) {
+    // 找到了
+    // console.log('111111111')
+    oldid.quantity++
+  } else {
+    // 没找到
+    console.log('22222')
+    // addApiList.getdruglist.push(goods)
+    addApiList.data.push({ id: detaillist.value.id, quantity: '1' })
+    addApiList.data = arrayUnique(addApiList.data, 'id')
+    // 接口请求
+    let res = await postselectedAPI(addApiList.data)
+    console.log(res.data.data.medicines)
+    localStorage.setItem('getdruglist', JSON.stringify(res.data.data.medicines))
 
-  addApiList.data.push({ id: detaillist.value.id, quantity: '1' })
-  addApiList.data = arrayUnique(addApiList.data, 'id')
-  // 接口请求
-  let res = await postselectedAPI(addApiList.data)
-
-  // 将两个数组合并
-  addApiList.getdruglist = addApiList.getdruglist.concat(res.data.data.medicines)
-  console.log(addApiList.getdruglist)
-  localStorage.setItem('getdruglist', JSON.stringify(addApiList.getdruglist))
+    // 将两个数组合并
+    addApiList.getdruglist = addApiList.getdruglist.concat(res.data.data.medicines)
+    console.log(addApiList.getdruglist)
+    localStorage.setItem('getdruglist', JSON.stringify(addApiList.getdruglist))
+  }
 }
 // 加
 const jia = async (item) => {

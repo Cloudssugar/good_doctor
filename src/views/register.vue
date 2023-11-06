@@ -6,14 +6,26 @@
     </div>
     <div class="login">
       <p>注册</p>
-      <van-form @submit="onSubmit">
+      <!-- <mylogin>
+        <template v-slot:codeslot>
+          <van-field v-model="code" center clearable placeholder="请输入短信验证码">
+            <template #button>
+              <mycode @getcodes="getcode" :mobile="mobile"></mycode>
+            </template>
+          </van-field>
+        </template>
+      </mylogin> -->
+
+      <van-form  @submit="onSubmit">
         <van-cell-group inset>
           <!-- 手机号 -->
           <van-field v-model="mobile" name="请输入手机号码" placeholder="请输入手机号码" :rules="[{ required: true, message: '请输入手机号码' }]" />
           <!-- 验证码 -->
           <van-field v-model="code" center clearable placeholder="请输入短信验证码">
             <template #button>
-              <van-button @click="getcode" v-model="code" size="small" type="default">获取验证码</van-button>
+              <!-- <van-button size="small" v-model="code" v-if="!sendMsgDisabled" @click="getcode">获取验证码</van-button>
+              <van-button size="small" v-if="sendMsgDisabled">{{ time + '秒后获取' }}</van-button> -->
+              <mycode @getcodes="getcode" :mobile="mobile"></mycode>
             </template>
           </van-field>
           <!-- 密码 -->
@@ -32,6 +44,8 @@
 </template>
 
 <script setup>
+import mylogin from '../components/comcom/login.vue'
+import mycode from '../components/comcom/code.vue'
 // 引入消息 文件
 import MessageMainVue from '../components/ts/message.ts'
 import { ref } from 'vue'
@@ -43,6 +57,8 @@ const router = useRouter()
 const mobile = ref('')
 // 验证码
 const code = ref('')
+const sendMsgDisabled = ref(false)
+const time = ref(60)
 // 密码
 const password = ref('')
 const onSubmit = (values) => {
@@ -50,14 +66,14 @@ const onSubmit = (values) => {
 }
 
 //获取验证码
-const getcode = async () => {
-  let res = await getcodeAPI({
-    mobile: mobile.value,
-    type: 'register'
-  })
-  console.log(res)
-  MessageMainVue({ type: 'success', text: res.data.message })
-}
+// const getcode = async () => {
+//   let res = await getcodeAPI({
+//     mobile: mobile.value,
+//     type: 'register'
+//   })
+//   console.log(res)
+//   MessageMainVue({ type: 'success', text: res.data.message })
+// }
 const checkedval = ref(false)
 const toselect = (e) => {
   console.log(e.target.checked)

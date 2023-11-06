@@ -1,10 +1,15 @@
 <template>
   <div>
-    <div class="top">
+    <!-- <div class="top">
       <van-icon name="arrow-left" />
       <span>开药问诊</span>
-      <span class="span" @click="toregister">问诊记录</span>
-    </div>
+       <span class="span" @click="toregister">问诊记录</span>
+    </div> -->
+    <mytop :toptitle="toptitle">
+      <template v-slot:topcontent>
+        <span class="span" @click="toregister">问诊记录</span>
+      </template>
+    </mytop>
     <div class="aa"></div>
     <!-- 通知栏 -->
     <van-notice-bar wrapable :scrollable="false" text="请如实填写资料以便医生了解您的病情和用用药需求" />
@@ -54,6 +59,7 @@
 </template>
 
 <script setup>
+import mytop from '../../components/comcom/top.vue'
 import { getmylistAPI } from '../../api/home.ts'
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -61,6 +67,8 @@ const router = useRouter()
 onMounted(() => {
   // aa()
 })
+
+const toptitle = ref('问诊记录')
 const num = ref()
 const num2 = ref()
 const num3 = ref()

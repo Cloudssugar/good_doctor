@@ -7,7 +7,7 @@
       <div class="detailed-list"><span>药品清单</span> 共{{ countnum }}件商品 <van-icon @click="getdelcart" name="delete-o" style="float: rigth" /> 清空</div>
       <!-- 商品列表 -->
       <div class="list">
-        <van-card v-for="(item, index) in getdruglist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
+        <van-card v-for="(item, index) in addApiList.getdruglist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
           <template #tags>
             <van-tag plain type="primary">{{ item.specs }}</van-tag>
           </template>
@@ -30,68 +30,68 @@ import { postdelcartAPI, postselectedAPI } from '../../api/home.ts'
 const props = defineProps({
   price: Number,
   countnum: Number,
-  getdruglist: Array,
+  addApiList: Array,
   title: String,
   detaillist: Object,
   iscart: Boolean,
   medicinelist: Array
 })
 //此处必须用toRefs，否则将失去响应式
-const { getdruglist } = toRefs(props)
+const { addApiList } = toRefs(props)
 console.log(props, '000000000')
 const detaillist = ref({})
 let druglists = reactive({
   aa: []
 })
-const addApiList = reactive({
-  data: []
-})
+// const addApiList = reactive({
+//   data: []
+// })
 
 // 数量减
 const jian = async (item) => {
   if (item.quantity == 0) return
-  item.quantity--
-  // 请求接口的参数
-  addApiList.data.push({ id: item.id, quantity: item.quantity })
-  addApiList.data = arrayUnique(addApiList.data, 'id')
+  // item.quantity--
+  //
+  props.medicinelist.map((item1) => {
+    if (item.id == item1.id) {
+      item1.quantity--
+    }
+  })
+  let arr = []
+  arr = props.medicinelist.filter((item) => item.quantity > 0)
+
   // 接口请求
-  let res = await postselectedAPI(addApiList.data)
+  let res = await postselectedAPI(arr)
   console.log(res)
+  addApiList.getdruglist = res.data.data.medicines
+  console.log(addApiList.getdruglist)
+  localStorage.setItem('getdruglist', JSON.stringify(addApiList.getdruglist))
+
+  if (addApiList.getdruglist == '') {
+    iscart.value = false
+  } else {
+    iscart.value = true
+    stopMove()
+  }
 }
 
 // 数量加
 const jia = async (item, index) => {
   // item.quantity++
-  medicinelist.map((item1) => {
+  props.medicinelist.map((item1) => {
     if (item.id == item1.id) {
       item1.quantity++
     }
   })
   let arr = []
-  arr = medicinelist.filter((item) => item.quantity > 0)
-  // quantitys.value = item.quantity
-  //  请求接口的字段
-  // addApiList.data.push({ id: item.id, quantity: item.quantity })
-  // addApiList.data = arrayUnique(addApiList.data, 'id')
+  arr = props.medicinelist.filter((item) => item.quantity > 0)
+
   // 接口请求
   let res = await postselectedAPI(arr)
   console.log(res)
-  getdruglist = res.data.data.medicines
-  console.log(getdruglist)
-  localStorage.setItem('getdruglist', JSON.stringify(getdruglist))
-  //////////////////////////
-  // item.quantity++
-
-  // // 请求接口的参数
-  // addApiList.data.push({ id: item.id, quantity: item.quantity })
-  // addApiList.data = arrayUnique(addApiList.data, 'id')
-  // // 接口请求
-  // let res = await postselectedAPI(addApiList.data)
-  // console.log(res)
-  // getdruglist = res.data.data.medicines
-  // console.log(getdruglist)
-  // localStorage.setItem('druglist', JSON.stringify(druglist))
-  // medicinelist = JSON.parse(localStorage.getItem('druglist'))
+  addApiList.getdruglist = res.data.data.medicines
+  console.log(addApiList.getdruglist)
+  localStorage.setItem('getdruglist', JSON.stringify(addApiList.getdruglist))
 }
 
 // 去重的方法

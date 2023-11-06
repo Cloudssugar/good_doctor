@@ -29,4 +29,6 @@ import { Search } from 'vant';
 import { Card } from 'vant';
 import { SubmitBar } from 'vant';
 
+
+
 createApp(App).use(router).use(pinia).use(Button).use(Icon).use(Form).use(Field).use(CellGroup).use(NoticeBar).use(Uploader).use(Radio).use(RadioGroup).use(AddressList).use(Search).use(Card).use(SubmitBar).mount('#app')

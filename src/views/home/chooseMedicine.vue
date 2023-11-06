@@ -1,10 +1,15 @@
 <template>
   <div>
-    <div class="top">
+    <!-- <div class="top">
       <van-icon @click="toback" name="arrow-left" />
       <span>选择药品</span>
       <span class="span"></span>
-    </div>
+    </div> -->
+    <mytop :toptitle='toptitle'>
+      <template v-slot:topcontent>
+        <span class="span"></span>
+      </template>
+    </mytop>
     <div class="aa"></div>
     <!-- 搜索 -->
     <div class="search">
@@ -16,7 +21,7 @@
     </div>
     <!-- 商品列表 -->
     <div class="list">
-      <van-card v-for="(item, index) in medicinelist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
+      <van-card  v-for="(item, index) in medicinelist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
         <template #tags>
           <van-tag @click="todetail(item)" plain type="primary">{{ item.specs }}2</van-tag>
         </template>
@@ -28,7 +33,8 @@
       </van-card>
     </div>
 
-    <!-- <mydruglist :price="price" :countnum="countnum" :getdruglist="getdruglist" :title="title" :iscart="iscart" @getcarts="getcarts" :medicinelist="medicinelist">
+    <!--  -->
+    <!-- <mydruglist :price="price" :countnum="countnum" :addApiList="addApiList" :title="title" :iscart="iscart" @getcarts="getcarts" :medicinelist="medicinelist">
       <template v-slot:submitSlot>
         <div> -->
     <van-submit-bar :price="price * 100" button-color="#16c2a3" :button-text="title" @click="medicinebox" style="width: 100%; height: 60px">
@@ -41,7 +47,7 @@
     <!-- 商品清单 -->
     <div class="box" @click="getcarts" v-show="iscart"></div>
     <div class="cart" v-show="iscart">
-      <div class="detailed-list"><span>药品清单</span> 共{{ countnum}}件商品 <van-icon @click="getdelcart" name="delete-o" style="float: rigth" /> 清空</div>
+      <div class="detailed-list"><span>药品清单</span> 共{{ countnum }}件商品 <van-icon @click="getdelcart" name="delete-o" style="float: rigth" /> 清空</div>
       <!-- 商品列表 -->
       <div class="list">
         <van-card v-show="item.quantity" v-for="(item, index) in addApiList.getdruglist" :key="item.id" :price="item.amount" desc="处方" :title="item.name" :thumb="item.avatar">
@@ -60,6 +66,7 @@
 </template>
 
 <script setup>
+import mytop from '../../components/comcom/top.vue'
 import mydruglist from '../../components/comcom/druglist.vue'
 import { getmedicinelistAPI, postselectedAPI } from '../../api/home.ts'
 import { showToast } from 'vant'
@@ -69,6 +76,7 @@ const router = useRouter()
 onMounted(() => {
   getlist()
 })
+const toptitle=ref('选择药品')
 const title = ref('申请开方')
 const value = ref('')
 // let druglists = ref([])
@@ -240,6 +248,11 @@ const Move = () => {
   document.body.style.overflow = '' //出现滚动条
   // 移除事件
   document.removeEventListener('touchmove', m, { passive: true })
+}
+
+// 申请开方
+const medicinebox = () => {
+  router.push('/chatRoom')
 }
 
 // 返回

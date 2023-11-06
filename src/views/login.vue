@@ -14,7 +14,7 @@
           <!-- 验证码 -->
           <van-field v-model="code" center clearable placeholder="请输入短信验证码">
             <template #button>
-              <van-button @click="getcode" size="small" type="default">获取验证码</van-button>
+              <mycode @getcodes="getcode" :mobile="mobile"></mycode>
             </template>
           </van-field>
         </van-cell-group>
@@ -59,6 +59,7 @@
 </template>
 
 <script setup>
+import mycode from '../components/comcom/code.vue'
 import MessageMainVue from '../components/ts/message.ts'
 import { ref } from 'vue'
 import { getcodeAPI, postcodeloginAPI, postpasswordrAPI } from '../api/login.ts'
@@ -70,6 +71,8 @@ const mobile = ref('')
 const mobiles = ref('')
 // 验证码
 const code = ref('')
+const sendMsgDisabled = ref(false)
+const time = ref(60)
 // 密码
 const password = ref('')
 const onSubmit = (values) => {
@@ -90,6 +93,15 @@ const getcode = async () => {
   })
   console.log(res)
   MessageMainVue({ type: 'success', text: res.data.message })
+
+  sendMsgDisabled.value = true
+  const interVal = window.setInterval(() => {
+    if (time.value-- <= 0) {
+      time.value = 60
+      sendMsgDisabled.value = false
+      window.clearInterval(interVal)
+    }
+  }, 1000)
 }
 
 // 单选框

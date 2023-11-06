@@ -41,10 +41,16 @@
       <div>
         <van-field v-model="name" name="患者姓名" label="患者姓名" placeholder="用户名" :rules="[{ required: true, message: '请填写真实姓名' }]" />
         <van-field v-model="idCard" @blur="blur" name="患者身份证号" label="患者身份证号" placeholder="用户名" :rules="[{ required: true, message: '请填写身份证号' }]" />
-        <van-radio-group style="margin-top: 20px; margin-left: 20px" v-model="gender" direction="horizontal">
-          性别 <van-radio name="1"> 男</van-radio>
-          <van-radio name="0">女</van-radio>
-        </van-radio-group>
+        <!--  -->
+        <van-field name="radio" label="单选框">
+          <template #input>
+            <van-radio-group v-model="gender" direction="horizontal">
+              <van-radio name="0">男</van-radio>
+              <van-radio name="1">女</van-radio>
+            </van-radio-group>
+          </template>
+        </van-field>
+
         <van-radio-group style="margin-top: 20px; margin-left: 20px" v-model="defaultFlag">
           <van-radio name="1" label-position="left"> 默认就诊人</van-radio>
         </van-radio-group>
@@ -62,11 +68,15 @@
       <div>
         <van-field v-model="editlist.name" name="患者姓名" label="患者姓名" placeholder="用户名" :rules="[{ required: true, message: '请填写真实姓名' }]" />
         <van-field v-model="editlist.idCard" name="患者身份证号" label="患者身份证号" placeholder="用户名" :rules="[{ required: true, message: '请填写身份证号' }]" />
-        <van-radio-group style="margin-top: 20px; margin-left: 20px" v-model="editlist.gender" direction="horizontal">
-          性别 <van-radio name="1"> 男</van-radio>
-          <van-radio name="0">女</van-radio>
-        </van-radio-group>
-        <van-radio-group style="margin-top: 20px; margin-left: 20px" v-model="editlist.defaultFlag">
+        <van-field name="radio" label="单选框">
+          <template #input>
+            <van-radio-group v-model="genders" direction="horizontal">
+              <van-radio name="1">男</van-radio>
+              <van-radio name="0">女</van-radio>
+            </van-radio-group>
+          </template>
+        </van-field>
+        <van-radio-group style="margin-top: 20px; margin-left: 20px" v-model="defaultFlags">
           <van-radio name="1" label-position="left"> 默认就诊人</van-radio>
         </van-radio-group>
       </div>
@@ -111,9 +121,8 @@ const addpatient = () => {
 // 添加患者
 const name = ref('')
 const idCard = ref('')
-const gender = ref('1')
-console.log(gender.value)
-const defaultFlag = ref('1')
+const gender = ref('')
+const defaultFlag = ref('0')
 const add = async () => {
   if (name.value == '' || idCard.value == '') {
     MessageMainVue({ type: 'success', text: '请添加信息' })
@@ -140,6 +149,11 @@ const add = async () => {
 const blur = () => {
   // 通过截取身份证号码的最后两位，进行取余数来判断奇数偶数
   gender.value = idCard.value.substring(17) % 2 // IDcard为用户输入的身份证号码
+  if (gender.value == '1') {
+    gender.value = '1'
+  } else if (gender.value == '0') {
+    gender.value = '0'
+  }
   console.log(gender.value, 'gender.value')
 }
 
@@ -147,10 +161,15 @@ const blur = () => {
 const iseditbox = ref(false)
 const editlist = ref({})
 const delid = ref('')
+const genders = ref('')
+const defaultFlags = ref('')
 const edit = (item) => {
   editlist.value = item
   delid.value = item.id
   console.log(editlist.value)
+  genders.value = editlist.value.gender.toString()
+  defaultFlags.value = editlist.value.defaultFlag.toString()
+  console.log(genders.value, '1')
   isbox.value = false
   isboxs.value = false
   iseditbox.value = true
