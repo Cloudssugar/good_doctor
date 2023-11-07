@@ -42,4 +42,14 @@ export function getmedicinedAPI(params){
   return http.get(`/patient/medicine/${params}`)
 }
 
+// 医生问诊
+export function postorderAPI(params){
+  return http.post(`patient/consult/order`,params)
+}
+
+// 
+export function getdetaildAPI(params){
+  return http.get(`patient/consult/order/detail`,params)
+}
+
 
