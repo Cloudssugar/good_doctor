@@ -44,7 +44,6 @@
 </template>
 
 <script setup>
-import mylogin from '../components/comcom/login.vue'
 import mycode from '../components/comcom/code.vue'
 // 引入消息 文件
 import MessageMainVue from '../components/ts/message.ts'

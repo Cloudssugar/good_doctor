@@ -52,12 +52,10 @@
   </div>
 </template>
 
-<script >
+<script setup>
 import mytop from '../../components/comcom/top.vue'
 import { getdetaildAPI, postorderAPI } from '../../api/home.ts'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-
-
 
 onMounted(() => {
   timer = setInterval(() => {
