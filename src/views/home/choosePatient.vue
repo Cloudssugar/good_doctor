@@ -107,6 +107,10 @@ const getlist = async () => {
   let res = await getmylistAPI()
   console.log(res)
   patientlist.value = res.data.data
+
+  //
+  console.log(patientlist.value[0].id)
+  localStorage.setItem('userid', patientlist.value[0].id)
 }
 
 // 添加页面
